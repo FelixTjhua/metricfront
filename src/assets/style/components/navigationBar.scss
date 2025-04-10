@@ -1,97 +1,115 @@
 .menu {
-  width: 280px;
-  height: $max_height;
-  background-color: white;
-  position: fixed;
-  top: 0;
-  left: 10px;
-  //定义局部变量
-  @mixin font_word($weight: 400, $size: 17px, $family: KaiTi_GB2312) {
-    font: {
-      family: $family;
-      size: $size;
-      weight: $weight;
-    }
-  }
+  /* 渐变背景 */
+  background: linear-gradient(135deg, #6a11cb, #2575fc); /* 紫蓝渐变 */
+  border-radius: 10px;
+  color: #ffffff;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2); /* 更加明显的阴影效果 */
+  font-family: 'Roboto', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  width: 250px; /* 使菜单栏保持左侧并具有固定宽度 */
+  transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+  position: fixed; /* 固定在页面左侧 */
+  height: 100vh; /* 高度占满整个页面 */
+  z-index: 1000; /* 确保导航栏显示在其他元素之上 */
 
-  .title {
-    height: 60px;
-    line-height: 60px;
-    text-align: center;
-    margin-top: 5vh;
-    margin-bottom: 5vh;
-    overflow: hidden;
-    @include font_word(400, 25px);
-    .title_icon {
-      margin-left: 50px;
-      padding-top: 5px;
-      width: 60px;
-      height: 60px;
-      background-color: $theme_color;
-      //background-color: #18478F;
-      border-radius: 10px;
-      color: white;
-      float: left;
-      font: {
-        size: 50px;
+  /* 菜单头部 */
+  .menu-header {
+    padding: 25px 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: rgba(0, 0, 0, 0.8);
+    border-radius: 10px 10px 0 0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+
+    .menu-header-icon {
+      display: flex;
+      gap: 12px;
+    }
+
+    .menu-header-title {
+      color: #ffffff;
+
+      .menu-title {
+        font-size: 26px;
+        font-weight: 700;
+        margin-bottom: 5px;
+      }
+
+      .menu-group-name {
+        font-size: 14px;
+        color: #bdc3c7;
       }
     }
-    .title_name {
-      margin-left: 110px;
-      margin-top: -10px;
-      height: 20px;
-      width: 120px;
-      @include font_word(600, 22px, coca_cola);
-    }
-    .title_groupName {
-      height: 20px;
-      width: 120px;
-      margin-left: 115px;
-      margin-top: 10px;
-      color: $word_color;
-      @include font_word(100, 20px, coca_cola);
-    }
   }
 
-  .menu_title {
-    margin-left: 53px;
-    padding-bottom: 10px;
-    color: rgba(113, 117, 151);
-    @include font_word(600, 17px, Futura);
+  /* 当前页面标题 */
+  .menu-subtitle {
+    font-size: 20px;
+    color: #ffffff;
+    padding: 15px 25px;
+    font-weight: 500;
+    margin-top: 15px;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 8px;
   }
 
-  .menu_item {
-    margin-left: 10px;
-    width: 255px;
-    border-radius: 18px;
-    margin: 10px;
-    .menu_item_icon {
-      margin-left: 10%;
-      margin-top: 5px;
-      font: {
-        size: 40px;
+  /* 菜单项 */
+  .menu-item {
+    padding: 15px 25px;
+    font-size: 18px;
+    font-weight: 500;
+    border-radius: 8px;
+    margin: 10px 0;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.3s, color 0.3s, transform 0.3s ease;
+    cursor: pointer;
+
+    &:hover {
+      background-color: rgba(52, 152, 219, 0.2);
+      color: #00bcd4;
+      transform: scale(1.05); /* 增加点击效果 */
+    }
+
+    &.is-active {
+      background-color: #00bcd4;
+      color: #ffffff;
+      box-shadow: 0 2px 10px rgba(0, 188, 212, 0.4); /* 增加选中时的阴影效果 */
+
+      .menu-item-icon {
+        color: #ffffff;
+      }
+
+      .menu-item-content {
+        color: #ffffff;
       }
     }
-    .menu_item_content {
-      margin-left: 5%;
-      @include font_word();
+
+    .menu-item-icon {
+      margin-right: 15px;
+      color: #bdc3c7;
+      font-size: 22px;
+      transition: color 0.3s ease;
+    }
+
+    .menu-item-content {
+      color: #ffffff;
+      font-weight: 600;
     }
   }
-  .el-menu-item {
-    color: $word_color;
-  }
 
-  .is-active {
-    background-color: $theme_color;
-    color: white;
-  }
+  /* 响应式设计 */
+  @media (max-width: 768px) {
+    .menu {
+      width: 200px; /* 在小屏幕下减少宽度 */
+    }
 
-  .bottom {
-    height: 250px;
-    background-color: $theme_color;
-    width: 200px;
-    position: fixed;
-    left: 65px;
-    top: 70%;
+    .menu-header-title .menu-title {
+      font-size: 20px;
+    }
+
+    .menu-item {
+      padding: 12px 20px;
+    }
   }
 }

@@ -1,5 +1,5 @@
 <template>
-  <!--  顶部导航栏-->
+  <!-- 顶部导航栏 -->
   <navigationBar />
   <div class="container">
     <div class="header">
@@ -7,28 +7,26 @@
         <!-- {{ page_name }} -->
       </div>
       <div class="upload">
-        <!-- <form
-        action="http://localhost:12345/uploadFiles"
-        enctype="multipart/form-data"
-        method="post"
-      > -->
-        <button size="small" class="upload-btn">
+        <!-- 上传按钮 -->
+        <button class="upload-btn" @click="triggerFileInput">
           <input
-            style=""
-            class="upload-content"
-            ref="fileInput"
-            multiple
-            type="file"
-            webkitdirectory
-            @change="handleFileChange"
+              class="upload-content"
+              ref="fileInput"
+              multiple
+              type="file"
+              webkitdirectory
+              @change="handleFileChange"
+              style="display: none;"
           />
+          <span class="upload-label">上传文件</span>
         </button>
-        <!-- </form> -->
       </div>
     </div>
+
     <div class="content">
       <el-scrollbar height="80vh">
         <div id="ck-graph" class="ck-graph" v-show="graph"></div>
+
         <div class="table-name">CK度量</div>
         <el-table :data="CKData" class="table" @row-click="openDetails">
           <el-table-column prop="className" label="ClassName" />
@@ -67,7 +65,6 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import navigationBar from "@/components/navigationBar.vue";
-import welcomeHeader from "@/components/header.vue";
 import { metric } from "@/api/code";
 import axios from "axios";
 import * as echarts from "echarts";
@@ -76,24 +73,32 @@ export default defineComponent({
   name: "code",
   data() {
     return {
-      CKData: [],
-      LKData: [],
-      TRAData: [],
-      uuid: "",
-      graph:false
+      CKData: [],  // CK度量数据
+      LKData: [],  // LK度量数据
+      TRAData: [], // 传统度量数据
+      uuid: "",    // 用于上传后获取的UUID
+      graph: false, // 控制图表显示
+      files: [],   // 存储选择的文件
     };
   },
-  components: { navigationBar, welcomeHeader },
-  mounted() {},
+  components: { navigationBar },
   methods: {
-    ready() {},
-    handleFileChange(event) {
-      this.files = event.target.files;
-      this.uploadFiles();
+    // 触发文件选择框显示
+    triggerFileInput() {
+      const fileInput: HTMLInputElement | null = this.$refs.fileInput as HTMLInputElement;
+      if (fileInput) {
+        fileInput.click();
+      }
     },
+    // 处理文件选择
+    handleFileChange(event: Event) {
+      const target = event.target as HTMLInputElement;
+      this.files = target.files || [];
+      this.uploadFiles(); // 调用上传文件的方法
+    },
+    // 上传文件
     uploadFiles() {
-      let that = this;
-      if (!this.files) {
+      if (!this.files || this.files.length === 0) {
         console.error("No files selected");
         return;
       }
@@ -105,66 +110,48 @@ export default defineComponent({
           formData.append("files", this.files[i]);
         }
       }
+
       if (formData.entries().next().done) {
-        // 选择的文件夹中没有.java文件
         window.alert("请选择Java项目！");
       } else {
         let config = {
           method: "post",
-          url: "/api/uploadFiles",
+          url: "/api/uploadFiles",  // 你实际的文件上传接口
           data: formData,
         };
         axios(config)
-          .then(function (response) {
-            that.uuid = response.data.data;
-            that.getData();
-          })
-          .catch(function (error) {
-            console.log(error);
-          });
+            .then((response) => {
+              this.uuid = response.data.data;
+              this.getData(); // 上传成功后调用获取数据的方法
+            })
+            .catch((error) => {
+              console.log("Error uploading files:", error);
+            });
       }
     },
+    // 获取数据
     getData() {
       let that = this;
       metric(this.uuid)
-        .then((res: any) => {
-          console.log(res);
-          that.CKData = res.data.ck;
-          that.LKData = res.data.lk;
-          that.TRAData = res.data.tradition;
-          that.ckGraph();
-        })
-        .catch((err: any) => {
-          console.log(err);
-        });
+          .then((res: any) => {
+            that.CKData = res.data.ck;
+            that.LKData = res.data.lk;
+            that.TRAData = res.data.tradition;
+            that.ckGraph(); // 获取数据后绘制图表
+          })
+          .catch((err: any) => {
+            console.log("Error getting data:", err);
+          });
     },
-    ckGraph(ckGraphData, ckName) {
+    // 绘制CK度量图表
+    ckGraph() {
       let chartDom = document.getElementById("ck-graph");
       let myChart = echarts.init(chartDom);
-      let option;
-      this.graph = true;
-      // for (const i of this.CKData) {
-      //   let temp = { value: [], name: "" };
-      //   temp.name = i.className;
-      //   temp.value.push(i.wmc);
-      //   temp.value.push(i.rfc);
-      //   temp.value.push(i.dit);
-      //   temp.value.push(i.noc);
-      //   temp.value.push(i.cbo);
-      //   temp.value.push(i.lcom);
-      //   ckGraphData.push(temp);
-      //   ckName.push(i.className);
-      // }
-      // console.log(ckGraphData);
-      option = {
+      let option = {
         title: {
-          text: "ck Chart",
-        },
-        legend: {
-          data: ckName,
+          text: "CK度量图表",
         },
         radar: {
-          // shape: 'circle',
           indicator: [
             { name: "WMC", max: 10 },
             { name: "RFC", max: 30 },
@@ -176,36 +163,41 @@ export default defineComponent({
         },
         series: [
           {
-            name: "ck",
+            name: "CK度量",
             type: "radar",
-            data: ckGraphData,
+            data: this.formatCKGraphData(),
           },
         ],
       };
-      myChart.setOption({
-        grid: {
-          width: "30%",
-          height: "50%",
-        },
-      });
-      option && myChart.setOption(option);
+      myChart.setOption(option);
     },
+    // 格式化CK度量图表数据
+    formatCKGraphData() {
+      let formattedData = [];
+      for (const row of this.CKData) {
+        formattedData.push({
+          value: [
+            row.wmc,
+            row.rfc,
+            row.dit,
+            row.noc,
+            row.cbo,
+            row.lcom,
+          ],
+          name: row.className,
+        });
+      }
+      return formattedData;
+    },
+    // 点击表格行查看详细信息
     openDetails(row) {
-      //具体操作
-      console.log(row);
       let ckGraphData = [];
       let ckName = [];
-      let temp = { value: [], name: "" };
-      temp.name = row.className;
-      temp.value.push(row.wmc);
-      temp.value.push(row.rfc);
-      temp.value.push(row.dit);
-      temp.value.push(row.noc);
-      temp.value.push(row.cbo);
-      temp.value.push(row.lcom);
+      let temp = { value: [], name: row.className };
+      temp.value.push(row.wmc, row.rfc, row.dit, row.noc, row.cbo, row.lcom);
       ckGraphData.push(temp);
       ckName.push(row.className);
-      this.ckGraph(ckGraphData,ckName)
+      this.ckGraph(); // 绘制图表
     },
   },
 });

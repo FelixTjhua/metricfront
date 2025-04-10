@@ -1,89 +1,108 @@
 <template>
-  <!--  顶部导航栏-->
+  <!-- 顶部导航栏 -->
   <navigationBar />
   <div class="container">
-    <!-- <welcomeHeader /> -->
     <div class="content">
-      <el-scrollbar height="85vh">
-        <div class="table-name">step1: UFC计算</div>
-        <el-table :data="UFCData" class="table">
-          <el-table-column prop="name" label="请输入对应个数" />
-          <el-table-column label="Simple" prop="simple">
-            <template #default="scope">
-              <el-input
-                v-if="activeIndex == scope.$index"
-                v-model="scope.row.simple"
-              ></el-input>
-              <span v-else>{{ scope.row.simple }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="Average" prop="average">
-            <template #default="scope">
-              <el-input
-                v-if="activeIndex == scope.$index"
-                v-model="scope.row.average"
-              ></el-input>
-              <span v-else>{{ scope.row.average }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="Complex" prop="complex">
-            <template #default="scope">
-              <el-input
-                v-if="activeIndex == scope.$index"
-                v-model="scope.row.complex"
-              ></el-input>
-              <span v-else>{{ scope.row.complex }}</span>
-            </template>
-          </el-table-column>
-          <!-- <el-table-column prop="name" label="对应个数" /> -->
-          <!-- <el-table-column prop="simple" label="Simple" /> -->
-          <!-- <el-table-column prop="average" label="Average" /> -->
-          <!-- <el-table-column prop="complex" label="Complex" /> -->
-          <el-table-column fixed="right" label="Operations">
-            <template #default="scope">
-              <div v-if="activeIndex == scope.$index">
-                <el-button type="info" @click="handleSave">Save</el-button>
-              </div>
-              <div v-else>
-                <el-button type="success" @click="handleEdit(scope.$index)"
-                  >Edit</el-button
-                >
-              </div>
-            </template>
-          </el-table-column>
-        </el-table>
-        <div class="calculator">UFC计算结果：{{ ufcResult }}</div>
+      <el-scrollbar height="85vh" class="scroll-container">
+        <!-- UFC计算部分 -->
+        <div class="step-section">
+          <div class="section-title">步骤1: UFC计算</div>
+          <el-table :data="UFCData" class="table ufc-table">
+            <el-table-column prop="name" label="请输入对应个数" />
+            <el-table-column label="Simple" prop="simple">
+              <template #default="scope">
+                <el-input
+                    v-if="activeIndex === scope.$index"
+                    v-model="scope.row.simple"
+                    class="input-field"
+                    size="small"
+                ></el-input>
+                <span v-else>{{ scope.row.simple }}</span>
+              </template>
+            </el-table-column>
 
-        <div class="table-name">step2: VAF计算</div>
-        <el-table :data="VAFData" class="table">
-          <el-table-column prop="index" label="序号" />
-          <el-table-column prop="character" label="系统特性" />
-          <el-table-column prop="description" label="简单描述" />
-          <el-table-column prop="level" label="等级">
-            <template #default="scope">
-              <el-input
-                v-if="activeIndex == scope.$index"
-                v-model="scope.row.level"
-              ></el-input>
-              <span v-else>{{ scope.row.level }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column fixed="right" label="Operations">
-            <template #default="scope">
-              <div v-if="activeIndex == scope.$index">
-                <el-button type="info" @click="handleSave">Save</el-button>
-              </div>
-              <div v-else>
-                <el-button type="success" @click="handleEdit(scope.$index)"
-                  >Edit</el-button
-                >
-              </div>
-            </template>
-          </el-table-column>
-        </el-table>
-        <div class="calculator">VAF计算结果：{{ vafResult }}</div>
+            <el-table-column label="Average" prop="average">
+              <template #default="scope">
+                <el-input
+                    v-if="activeIndex === scope.$index"
+                    v-model="scope.row.average"
+                    class="input-field"
+                    size="small"
+                ></el-input>
+                <span v-else>{{ scope.row.average }}</span>
+              </template>
+            </el-table-column>
 
-        <div class="table-name">功能点度量结果：{{ Math.ceil(vafResult * ufcResult * 100) / 100.0 }}</div>
+            <el-table-column label="Complex" prop="complex">
+              <template #default="scope">
+                <el-input
+                    v-if="activeIndex === scope.$index"
+                    v-model="scope.row.complex"
+                    class="input-field"
+                    size="small"
+                ></el-input>
+                <span v-else>{{ scope.row.complex }}</span>
+              </template>
+            </el-table-column>
+
+            <el-table-column fixed="right" label="操作" class="operations-column">
+              <template #default="scope">
+                <div v-if="activeIndex === scope.$index">
+                  <el-button type="primary" @click="handleSave" size="small">保存</el-button>
+                </div>
+                <div v-else>
+                  <el-button type="success" @click="handleEdit(scope.$index)" size="small">编辑</el-button>
+                </div>
+              </template>
+            </el-table-column>
+          </el-table>
+          <div class="calculator-result center">
+            UFC计算结果: {{ ufcResult }}
+          </div>
+        </div>
+
+        <!-- VAF计算部分 -->
+        <div class="step-section">
+          <div class="section-title">步骤2: VAF计算</div>
+          <el-table :data="VAFData" class="table vaf-table">
+            <el-table-column prop="index" label="序号" />
+            <el-table-column prop="character" label="系统特性" />
+            <el-table-column prop="description" label="描述" />
+            <el-table-column label="等级" prop="level">
+              <template #default="scope">
+                <el-input
+                    v-if="activeIndex === scope.$index"
+                    v-model="scope.row.level"
+                    class="input-field"
+                    size="small"
+                ></el-input>
+                <span v-else>{{ scope.row.level }}</span>
+              </template>
+            </el-table-column>
+
+            <el-table-column fixed="right" label="操作" class="operations-column">
+              <template #default="scope">
+                <div v-if="activeIndex === scope.$index">
+                  <el-button type="primary" @click="handleSave" size="small">保存</el-button>
+                </div>
+                <div v-else>
+                  <el-button type="success" @click="handleEdit(scope.$index)" size="small">编辑</el-button>
+                </div>
+              </template>
+            </el-table-column>
+          </el-table>
+          <div class="calculator-result center">
+            VAF计算结果: {{ vafResult }}
+          </div>
+        </div>
+
+        <!-- 最终计算结果 -->
+        <div class="final-result center">
+          功能点度量结果:
+          <span class="result-value">
+            {{ Math.ceil(vafResult * ufcResult * 100) / 100.0 }}
+          </span>
+        </div>
       </el-scrollbar>
     </div>
   </div>
@@ -92,185 +111,66 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import navigationBar from "@/components/navigationBar.vue";
-import welcomeHeader from "@/components/header.vue";
-import { uploadFile } from "@/utils/common";
-import { Promise } from "es6-promise";
 
 export default defineComponent({
   name: "functionPoint",
   data() {
     return {
       UFCData: [
-        {
-          name: "External Inputs",
-          simple: 0,
-          average: 2,
-          complex: 0,
-        },
-        {
-          name: "External Outputs",
-          simple: 0,
-          average: 2,
-          complex: 1,
-        },
-        {
-          name: "External Queries",
-          simple: 0,
-          average: 2,
-          complex: 0,
-        },
-        {
-          name: "Internal Logic Files",
-          simple: 0,
-          average: 0,
-          complex: 1,
-        },
-        {
-          name: "External Interfaces Files",
-          simple: 0,
-          average: 2,
-          complex: 0,
-        },
+        { name: "External Inputs", simple: 0, average: 2, complex: 0 },
+        { name: "External Outputs", simple: 0, average: 2, complex: 1 },
+        { name: "External Queries", simple: 0, average: 2, complex: 0 },
+        { name: "Internal Logic Files", simple: 0, average: 0, complex: 1 },
+        { name: "External Interfaces Files", simple: 0, average: 2, complex: 0 },
       ],
       VAFData: [
-        {
-          index: 0,
-          character: "数据通讯",
-          description: "软件系统的信息交互情况",
-          level: 3,
-        },
-        {
-          index: 1,
-          character: "数据分布处理",
-          description: "软件系统如何处理分布数据",
-          level: 3,
-        },
-        {
-          index: 2,
-          character: "系统性能",
-          description: "用户对软件系统的响应时间和吞吐量的要求",
-          level: 0,
-        },
-        {
-          index: 3,
-          character: "使用配置",
-          description: "当前硬件平台的使用度",
-          level: 5,
-        },
-        {
-          index: 4,
-          character: "事务处理频率",
-          description: "每日、每周以及每月等的事务处理情况",
-          level: 0,
-        },
-        {
-          index: 5,
-          character: "在线数据输入",
-          description: "在线信息输入的百分比",
-          level: 3,
-        },
-        {
-          index: 6,
-          character: "操作便利",
-          description: "软件系统是否为用户操作提供便利",
-          level: 3,
-        },
-        {
-          index: 7,
-          character: "在线更新",
-          description: "多少ILF通过在线事务更新",
-          level: 3,
-        },
-        {
-          index: 8,
-          character: "处理复杂度",
-          description: "软件系统是否广泛使用逻辑和数学运算",
-          level: 0,
-        },
-        {
-          index: 9,
-          character: "复用性",
-          description: "本软件系统是否为多个应用系统复用",
-          level: 5,
-        },
-        {
-          index: 10,
-          character: "安装难易",
-          description: "版本维护和安装的难易程度",
-          level: 0,
-        },
-        {
-          index: 11,
-          character: "运行维护",
-          description: "软件系统的启动、备份以及恢复的难易程度",
-          level: 0,
-        },
-        {
-          index: 12,
-          character: "多站点支持",
-          description: "软件系统是否用于多组织和多站点",
-          level: 0,
-        },
-        {
-          index: 13,
-          character: "变更支持",
-          description: "软件系统对查询、统计以及变更维护的支持",
-          level: 3,
-        },
+        { index: 0, character: "数据通讯", description: "信息交互", level: 3 },
+        { index: 1, character: "数据分布处理", description: "数据分布处理", level: 3 },
+        { index: 2, character: "系统性能", description: "系统响应时间", level: 0 },
+        { index: 3, character: "使用配置", description: "硬件平台使用情况", level: 5 },
+        { index: 4, character: "事务处理频率", description: "事务处理频率", level: 0 },
+        { index: 5, character: "在线数据输入", description: "在线数据输入百分比", level: 3 },
+        { index: 6, character: "操作便利", description: "操作便捷性", level: 3 },
+        { index: 7, character: "在线更新", description: "ILF在线更新", level: 3 },
+        { index: 8, character: "处理复杂度", description: "是否复杂处理", level: 0 },
+        { index: 9, character: "复用性", description: "系统复用情况", level: 5 },
+        { index: 10, character: "安装难易", description: "安装和维护难易", level: 0 },
+        { index: 11, character: "运行维护", description: "启动和恢复难易", level: 0 },
+        { index: 12, character: "多站点支持", description: "是否多站点支持", level: 0 },
+        { index: 13, character: "变更支持", description: "变更支持情况", level: 3 },
       ],
       activeIndex: -1,
-      files: [],
     };
   },
   computed: {
-    ufcResult: function () {
-      let fp_ufc_data = this.UFCData;
-      let res =
-        fp_ufc_data[0].simple * 3 +
-        fp_ufc_data[0].average * 4 +
-        fp_ufc_data[0].complex * 6 +
-        fp_ufc_data[1].simple * 4 +
-        fp_ufc_data[1].average * 5 +
-        fp_ufc_data[1].complex * 7 +
-        fp_ufc_data[2].simple * 3 +
-        fp_ufc_data[2].average * 4 +
-        fp_ufc_data[2].complex * 6 +
-        fp_ufc_data[3].simple * 5 +
-        fp_ufc_data[3].average * 7 +
-        fp_ufc_data[3].complex * 10 +
-        fp_ufc_data[4].simple * 7 +
-        fp_ufc_data[4].average * 10 +
-        fp_ufc_data[4].complex * 15;
+    ufcResult() {
+      let res = 0;
+      const fp_ufc_data = this.UFCData;
+      for (let i = 0; i < fp_ufc_data.length; i++) {
+        res += fp_ufc_data[i].simple * (i === 0 ? 3 : 4);
+        res += fp_ufc_data[i].average * (i === 1 ? 5 : 4);
+        res += fp_ufc_data[i].complex * (i === 3 ? 10 : 6);
+      }
       return res;
     },
-
-    vafResult: function () {
+    vafResult() {
       let res = 0;
-      let fp_vaf_data = this.VAFData;
-      for (let i = 0; i < 14; i++) {
+      const fp_vaf_data = this.VAFData;
+      for (let i = 0; i < fp_vaf_data.length; i++) {
         res += fp_vaf_data[i].level * 1;
       }
-      res = res * 0.01 + 0.65;
-      return res;
+      return res * 0.01 + 0.65;
     },
   },
-  components: { navigationBar, welcomeHeader },
-  mounted() {},
   methods: {
-    ready() {},
-    upload(item: any) {
-      console.log(item);
-
-      let data = uploadFile(item);
-    },
     handleEdit(index: number) {
       this.activeIndex = index;
-      console.log(this.activeIndex);
     },
     handleSave() {
       this.activeIndex = -1;
     },
   },
+  components: { navigationBar },
 });
 </script>
 

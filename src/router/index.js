@@ -4,6 +4,7 @@ import classDiagram from "../views/classDiagram.vue";
 import code from "../views/code.vue";
 import controlFlow from "../views/controlFlow.vue";
 import useCase from "../views/useCase.vue";
+import aiAnalysis from "@/views/aiAnalysis.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -32,6 +33,11 @@ const router = createRouter({
       path: "/useCase",
       name: "useCase",
       component: useCase,
+    },
+    {
+      path: "/aiAnalysis",
+      name: "aiAnalysis",
+      component: aiAnalysis,
     },
   ],
 });
